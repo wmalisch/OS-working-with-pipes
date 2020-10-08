@@ -35,10 +35,6 @@ int main(int argc, char **argv)
 	}
 
 	// You must insert the following into your code (Replace zeros with the appropriate values/variables)
-	printf("A pipe is created for communication between parent (PID %d) and child\n", 0);
-	printf("parent (PID %d) created a child (PID %d)\n", 0, 0);
-	printf("parent (PID %d) receives X = \"%s\" from the user\n", 0, 0);
-	printf("child (PID %d) receives Y = \"%s\" and Z = \"%s\" from the user\n", 0, 0, 0);
 	printf("child (PID %d) concatenates Y and Z to generate Y'= %s\n", 0, 0);
 	printf("child (PID %d) writes Y' into the pipe\n", 0);
 	printf("parent (PID %d) reads Y' from the pipe (Y' = \"%s\")\n", 0, 0);
@@ -52,9 +48,38 @@ int main(int argc, char **argv)
 	 * 										   YOUR CODE GOES HERE										
 	 ***************************************************************************************************/
 
+	int port[2];
+	pid_t pid, x, y;
 
+	if(pipe(port) < 0){
+		perror("Pipe error");
+		exit(0);
+	}
 
+	pid = fork();
+	if (pid < 0) // Error in fork
+	{
+    	perror("fork error");
+    	exit(0);
+  	}
+	
+	if(pid > 0) // Parent process
+	{
+		x = getpid();
+		printf("A pipe is created for communication between parent (PID %d) and child\n", x);
+		printf("parent (PID %d) created a child (PID %d)\n", x, pid);
+		char *str = argv[1];
+		printf("parent (PID %d) receives X = \"%s\" from the user\n", 0, 0);
+		wait(NULL);
+		
+	}
+	if(pid == 0) // Child process
+	{
+		y = getpid();
 
+	printf("child (PID %d) receives Y = \"%s\" and Z = \"%s\" from the user\n", 0, 0, 0);
+	
+	}
 
 
 
