@@ -47,45 +47,46 @@ int main(int argc, char **argv)
 	int port[2];
 	pid_t pid, x, y;
 
+	// Create pipe and make sure theres no error
 	if(pipe(port) < 0){
 		perror("Pipe error");
 		exit(0);
 	}
 
+	// Call fork to create child process
 	pid = fork();
-	if (pid < 0) // Error in fork
+
+	// Error in fork
+	if (pid < 0) 
 	{
     	perror("fork error");
     	exit(0);
   	}
 	
-	if(pid > 0) // Parent process
+	// Parent process
+	if(pid > 0) 
 	{
 		x = getpid();
-		int l = strlen(argv[1])+strlen(argv[2])+strlen(argv[3]);
-		char store[l];
+		char store[(strlen(argv[1])+strlen(argv[2])+strlen(argv[3]))];  // Set a char [] to hold the entire concatenation of string arguments
 		printf("A pipe is created for communication between parent (PID %d) and child\n", x);
 		printf("parent (PID %d) created a child (PID %d)\n", x, pid);
-		char *str = argv[1];
+		char *str = argv[1];  // Get CS string
 		printf("parent (PID %d) receives X = \"%s\" from the user\n", x, str);
 		wait(NULL);
 		read(port[0],&store,(strlen(argv[2])+strlen(argv[3])));
-		printf("%s\n",store);
 		printf("parent (PID %d) reads Y' from the pipe (Y' = \"%s\")\n", x, store);
-		strcat(str,store);
-		printf("parent (PID %d) concatenates X and Y' to generate the string: %s\n", x, str);
+		printf("parent (PID %d) concatenates X and Y' to generate the string: %s\n", x, strcat(str,store));
 	}
-	if(pid == 0) // Child process
+
+	// Child process
+	if(pid == 0) 
 	{
 		y = getpid();
-		char *three = argv[2];
-		char *fun = argv[3];
+		char *three = argv[2];  // Get 3305 string
+		char *fun = argv[3];  // Get is fun string
 		printf("child (PID %d) receives Y = \"%s\" and Z = \"%s\" from the user\n", y, three, fun);
-		strcat(three, fun);
-		printf("child (PID %d) concatenates Y and Z to generate Y'= %s\n", y, three);
-		int z = strlen(three);
-		printf("%d",z);
-		write(port[1],three,30);
+		printf("child (PID %d) concatenates Y and Z to generate Y'= %s\n", y, strcat(three, fun));
+		write(port[1],three,strlen(three));
 		printf("child (PID %d) writes Y' into the pipe\n", y);			
 	}
 	return 0;
