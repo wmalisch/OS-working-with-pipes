@@ -35,11 +35,7 @@ int main(int argc, char **argv)
 	}
 
 	// You must insert the following into your code (Replace zeros with the appropriate values/variables)
-	printf("child (PID %d) concatenates Y and Z to generate Y'= %s\n", 0, 0);
-	printf("child (PID %d) writes Y' into the pipe\n", 0);
-	printf("parent (PID %d) reads Y' from the pipe (Y' = \"%s\")\n", 0, 0);
-	printf("parent (PID %d) concatenates X and Y' to generate the string: %s\n", 0, 0);
-
+	// 
 	// Note: You do not need to implement a function to concatenate two strings. "string.h" header file has been included
 
 
@@ -66,25 +62,31 @@ int main(int argc, char **argv)
 	if(pid > 0) // Parent process
 	{
 		x = getpid();
+		int l = strlen(argv[1])+strlen(argv[2])+strlen(argv[3]);
+		char store[l];
 		printf("A pipe is created for communication between parent (PID %d) and child\n", x);
 		printf("parent (PID %d) created a child (PID %d)\n", x, pid);
 		char *str = argv[1];
-		printf("parent (PID %d) receives X = \"%s\" from the user\n", 0, 0);
+		printf("parent (PID %d) receives X = \"%s\" from the user\n", x, str);
 		wait(NULL);
-		
+		read(port[0],&store,(strlen(argv[2])+strlen(argv[3])));
+		printf("%s\n",store);
+		printf("parent (PID %d) reads Y' from the pipe (Y' = \"%s\")\n", x, store);
+		strcat(str,store);
+		printf("parent (PID %d) concatenates X and Y' to generate the string: %s\n", x, str);
 	}
 	if(pid == 0) // Child process
 	{
 		y = getpid();
-
-	printf("child (PID %d) receives Y = \"%s\" and Z = \"%s\" from the user\n", 0, 0, 0);
-	
+		char *three = argv[2];
+		char *fun = argv[3];
+		printf("child (PID %d) receives Y = \"%s\" and Z = \"%s\" from the user\n", y, three, fun);
+		strcat(three, fun);
+		printf("child (PID %d) concatenates Y and Z to generate Y'= %s\n", y, three);
+		int z = strlen(three);
+		printf("%d",z);
+		write(port[1],three,30);
+		printf("child (PID %d) writes Y' into the pipe\n", y);			
 	}
-
-
-
-
-
-
 	return 0;
 }
